@@ -11,17 +11,16 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-/**
- * Created by lumster on 27.02.2016.
- */
+import java.util.logging.LogRecord;
+
 public class Fragment1 extends Fragment {
+
+    private static String TAG = "lol";
 
     private static int brobotSpeed = 50;
 
-    private MainActivity activity;
     private Joystick joystick;
     private TextView textView;
-    private View rootView;
 
     private int joystickWidth;
     private int joystickHeight;
@@ -32,13 +31,11 @@ public class Fragment1 extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment1_layout, container, false);
         initGuiComponents(view);
-        activity = ((MainActivity) getActivity());
 
         return view;
     }
 
     private void initGuiComponents(View view){
-        rootView = view;
         textView = (TextView) view.findViewById(R.id.coordinates);
         joystick = (Joystick) view.findViewById(R.id.joystick);
 
@@ -47,16 +44,25 @@ public class Fragment1 extends Fragment {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
-                joystickWidth = joystick.getWidth()/2;
-                joystickHeight = joystick.getHeight()/2;
+                if(event.getAction() == MotionEvent.ACTION_MOVE){
 
-                int x = (int) (event.getX()-(joystickWidth));
-                int y = (int) (event.getY()-(joystickHeight));
+                    joystickWidth = joystick.getWidth()/2;
+                    joystickHeight = joystick.getHeight()/2;
 
-                updateText(String.valueOf(getX(x, joystickWidth)) + "x, " + String.valueOf(getY(y, joystickHeight))+ " y");
+                    int x = (int) (event.getX()-(joystickWidth));
+                    int y = (int) (event.getY()-(joystickHeight));
+
+                    updateText(String.valueOf(getX(x, joystickWidth)) + " x, " + String.valueOf(getY(y, joystickHeight))+ " y");
+                }
+                if(event.getAction() == MotionEvent.ACTION_UP){
+                    updateText("0 x , 0 y");
+                }
+
+
                 return true;
             }
         });
+
     }
 
     private int getX(int x, int joystickWidth){
@@ -68,9 +74,7 @@ public class Fragment1 extends Fragment {
         }
         if(x < (-joystickWidth)){
             outOfBoundsX = -((-x) - joystickWidth);
-
         }
-
         return translateToBrobotSpeed(x-outOfBoundsX);
     }
 
@@ -89,7 +93,7 @@ public class Fragment1 extends Fragment {
 
     private int translateToBrobotSpeed(int i){
         double percentOfMeasuredValue = (i*100)/joystickHeight;
-        return (int)(percentOfMeasuredValue/100)* brobotSpeed;
+        return (int) ((percentOfMeasuredValue/100) * brobotSpeed);
     }
 
     private void updateText(String string){

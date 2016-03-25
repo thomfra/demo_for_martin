@@ -6,8 +6,8 @@
 
     <com.example.lumster.demo_for_martin.Joystick
         android:id="@+id/joystick"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
         android:layout_gravity="center_horizontal"
         />
 
